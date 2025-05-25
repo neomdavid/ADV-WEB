@@ -9,4 +9,4 @@ const articleSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
 });
 
-module.exports = mongoose.model.ArticleSchema || mongoose.model('Article', articleSchema); 
+module.exports = mongoose.model('Article', articleSchema); 

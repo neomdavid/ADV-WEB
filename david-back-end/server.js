@@ -2,8 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const bodyParser = require('body-parser');
-const jsonParser = bodyParser.json();
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const articleRoutes = require('./routes/articleRoutes');
@@ -13,11 +11,9 @@ const app = express();
 // Database Connection
 connectDB();
 
-app.use(express.json());
-
 // Middleware
-app.use(jsonParser);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Curb CORS Error by adding a header here
@@ -43,8 +39,16 @@ if (process.env.NODE_ENV === 'production') {
 
 // Error Handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Server Error' });
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    message: err.message || 'Server Error',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
 });
 
 const PORT = process.env.PORT || 5000;

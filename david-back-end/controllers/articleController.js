@@ -9,6 +9,21 @@ const getArticles = async (req, res) => {
   }
 };
 
+const getArticleById = async (req, res) => {
+  try {
+    console.log('Fetching article with ID:', req.params.id);
+    const article = await Article.findById(req.params.id);
+    console.log('Found article:', article);
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' });
+    }
+    res.json(article);
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createArticle = async (req, res) => {
   try {
     const article = await Article.create(req.body);
@@ -36,4 +51,4 @@ const deleteArticle = async (req, res) => {
   }
 };
 
-module.exports = { getArticles, createArticle, updateArticle, deleteArticle }; 
+module.exports = { getArticles, getArticleById, createArticle, updateArticle, deleteArticle }; 
