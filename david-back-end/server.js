@@ -5,6 +5,7 @@ const path = require('path');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const articleRoutes = require('./routes/articleRoutes');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -24,18 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/articles', articleRoutes);
-
-// Getting UI
-if (process.env.NODE_ENV === 'production') {
-  const root = path.join(__dirname, '../david-front-end/dist');
-  app.use(express.static(root));
-  app.all('*', (req, res) => {
-    res.sendFile(path.join(root, 'index.html'));
-  });
-}
 
 // Error Handling
 app.use((err, req, res, next) => {

@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Article = require('../models/Article');
 const bcrypt = require('bcryptjs'); // For password hashing
 const jwt = require('jsonwebtoken'); // For generating tokens
 
@@ -90,4 +91,31 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, createUser, updateUser, deleteUser, loginUser }; 
+const getStats = async (req, res) => {
+  try {
+    // Get total counts
+    const totalUsers = await User.countDocuments();
+    const totalArticles = await Article.countDocuments();
+
+    // Get recent users with roles (excluding passwords)
+    const recentUsers = await User.find({}, '-password')
+      .sort({ _id: -1 })
+      .limit(5);
+
+    // Get recent articles
+    const recentArticles = await Article.find()
+      .sort({ _id: -1 })
+      .limit(5);
+
+    res.json({
+      totalUsers,
+      totalArticles,
+      recentUsers,
+      recentArticles
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getUsers, createUser, updateUser, deleteUser, loginUser, getStats }; 
