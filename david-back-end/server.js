@@ -13,21 +13,14 @@ const app = express();
 connectDB();
 
 // CORS Configuration
-const allowedOrigins = [
-  'https://nd-client-liu4dx4mu-neo-davids-projects.vercel.app',
-  'http://localhost:5173' // for local development
-];
+const ALLOWED_ORIGIN = process.env.NODE_ENV === 'production'
+  ? 'https://nd-client-pi.vercel.app'
+  : '*';
 
 app.use(cors({
-  origin: function(origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: ALLOWED_ORIGIN,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
