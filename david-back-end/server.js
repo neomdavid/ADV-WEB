@@ -13,13 +13,17 @@ const app = express();
 connectDB();
 
 // CORS Configuration
+const ALLOWED_ORIGIN = process.env.NODE_ENV === 'production'
+  ? 'https://nd-client-pi.vercel.app'
+  : '*';
+
+// CORS middleware configuration
 app.use(cors({
-  origin: true, // Allow all origins
+  origin: ALLOWED_ORIGIN,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  maxAge: 86400 // 24 hours
 }));
 
 // Handle preflight requests
@@ -46,7 +50,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/articles', articleRoutes);
 
-// Error Handling
+// Error Handling with CORS headers
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
@@ -55,7 +59,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Handle 404 routes
+// Handle 404 routes with CORS headers
 app.use((req, res) => {
   console.log('404 Not Found:', req.method, req.url);
   res.status(404).json({ message: 'Route not found' });
