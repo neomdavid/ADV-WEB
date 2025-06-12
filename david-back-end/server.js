@@ -25,6 +25,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// Welcome message route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to David MERN API',
+    status: 'Server is running',
+    endpoints: {
+      users: '/api/users',
+      articles: '/api/articles',
+      stats: '/api/users/stats'
+    }
+  });
+});
+
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/articles', articleRoutes);
@@ -40,6 +53,7 @@ app.use((err, req, res, next) => {
 
 // Handle 404 routes
 app.use((req, res) => {
+  console.log('404 Not Found:', req.method, req.url);
   res.status(404).json({ message: 'Route not found' });
 });
 
