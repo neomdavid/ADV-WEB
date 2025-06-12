@@ -13,16 +13,17 @@ const app = express();
 connectDB();
 
 // CORS Configuration
-const ALLOWED_ORIGIN = process.env.NODE_ENV === 'production'
-  ? 'https://nd-client-pi.vercel.app'
-  : '*';
-
 app.use(cors({
-  origin: ALLOWED_ORIGIN,
+  origin: true, // Allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 // Middleware
 app.use(express.json());
